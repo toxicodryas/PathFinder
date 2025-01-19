@@ -17,9 +17,9 @@ int apply_operation(int value, const char* operation) {
     }
 }
 
-// Recursive function to generate permutations of operations
-void find_best_path(char** operations, int num_operations, int current_value, int* used, int* max_value, int* path, int* best_path, int* best_path_length, int depth) {
-    // If we have used all operations, check if it's the best value
+// Function to generate permutations of operations
+void permute(char** operations, int num_operations, int* used, int* path, int depth, int current_value, int* max_value, int* best_path, int* best_path_length) {
+    // If we've used all operations, evaluate the result
     if (depth == num_operations) {
         if (current_value > *max_value) {
             *max_value = current_value;
@@ -29,7 +29,7 @@ void find_best_path(char** operations, int num_operations, int current_value, in
         return;
     }
 
-    // Try every operation that has not been used yet
+    // Try each operation that has not been used yet
     for (int i = 0; i < num_operations; ++i) {
         if (!used[i]) {
             // Mark this operation as used
@@ -38,7 +38,7 @@ void find_best_path(char** operations, int num_operations, int current_value, in
 
             // Apply the operation and recurse
             int new_value = apply_operation(current_value, operations[i]);
-            find_best_path(operations, num_operations, new_value, used, max_value, path, best_path, best_path_length, depth + 1);
+            permute(operations, num_operations, used, path, depth + 1, new_value, max_value, best_path, best_path_length);
 
             // Backtrack and mark the operation as unused
             used[i] = 0;
@@ -75,7 +75,7 @@ int main() {
     int used[100] = {0};  // Assuming no more than 100 operations
 
     // Start the recursive search for the best path
-    find_best_path(operations, num_operations, start_value, used, &max_value, path, best_path, &best_path_length, 0);
+    permute(operations, num_operations, used, path, 0, start_value, &max_value, best_path, &best_path_length);
     
     // Output the best path and its resulting value
     printf("Best path results in value: %d\n", max_value);
